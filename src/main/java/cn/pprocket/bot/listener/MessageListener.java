@@ -81,10 +81,21 @@ public class MessageListener {
         JSONArray obj  = JSONObject.parseObject(res).getJSONArray("data");
         final StringBuilder[] msg = {new StringBuilder("")};
         final int[] flag = {0};
+        int[] order = new int[2];
+        order[0] = 1;
+        order[1] = 5;
         obj.forEach(ele -> {
+            int from = order[0];
+            int to = order[1];
+            String prefix = from + "-" + to + "  ";
             JSONObject  copy = (JSONObject) ele;
             String answer = copy.getString("answer");
             String letter = "";
+            if (flag[0]%5 ==0) {
+                msg[0].append(prefix);
+                order[0]+=5;
+                order[1]+=5;
+            }
             switch (answer) {
                 case "1" :{
                     letter = "A";
@@ -100,15 +111,15 @@ public class MessageListener {
                 } break;
 				case "5" : {
 					letter = "E";
-				}
+				} break;
                 default: {
                     letter = answer;
                 }
             }
-            msg[0].append(letter + "   ");
             flag[0]++;
-            if (flag[0] %5==0) {
-                msg[0].append("\r\n");
+            msg[0].append(letter + "   ");
+            if (flag[0]%5 ==0) {
+                msg[0].append("\r\n\r\n\r\n");
             }
         });
         return msg[0].toString();
@@ -121,7 +132,7 @@ public class MessageListener {
             String message = chain.contentToString();
             message = message.toLowerCase();
             List<WorkList.DataDTO> list = WorkClient.INSTANCE.getWorkList();
-            if (message.equals("获取作业列表")) {
+            if (message.equals("获取作业列表") || message.equals("list")) {
                 StringBuilder sb = new StringBuilder();
                 int[] i = new int[]{0};
                 i[0] = 1;
@@ -157,9 +168,6 @@ public class MessageListener {
                 event.getSubject().sendMessage("这个b还没有交");
                 return;
             }
-            if (isCard) {
-                builder.add(event.getSubject(),new PlainText(getCardAnswer(obj.getJSONObject("data").getString("cardId"))));
-            }
             if (!imageUrl.equals("") && (submitUser[0] != null)) {
                 String[] imgArray = imageUrl.split("\\|");
                 ExecutorService executorService = Executors.newFixedThreadPool(6); // 线程池
@@ -181,12 +189,12 @@ public class MessageListener {
                     }
                 }
             }
+            if (isCard) {
+                builder.add(event.getSubject(),new PlainText(getCardAnswer(obj.getJSONObject("data").getString("cardId"))));
+            }
             if (builder.size() != 0) {
                 event.getSubject().sendMessage(builder.build());
             }
-
-
-
         });
         listener.start();
 
