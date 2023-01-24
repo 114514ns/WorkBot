@@ -1,5 +1,6 @@
 package cn.pprocket.bot.listener;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.extra.pinyin.PinyinUtil;
 import cn.hutool.http.ContentType;
 import cn.hutool.http.HttpUtil;
@@ -28,6 +29,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -152,16 +154,20 @@ public class MessageListener {
             Friend user = event.getSubject();
             ForwardMessageBuilder builder = new ForwardMessageBuilder(user);
             final JSONObject[] submitUser = {null};
+            List<JSONObject> handed = new ArrayList<>();
             obj.getJSONObject("data").getJSONArray("submitUser").forEach(value-> {
                 JSONObject copy = (JSONObject) value;
+                if (copy.containsKey("submitCover")) {
+                    handed.add(copy);
+                }
                 if ((getFirstLetter(copy.getString("userRealName")).equals(name)) && copy.getString("submitCover")!= null) {
                     submitUser[0] = copy;
                 }
             });
             boolean isCard = obj.getJSONObject("data").getString("cardId")!=null;
             if (submitUser[0] == null) {
-                event.getSubject().sendMessage("没有这个人（或者没有交");
-                return;
+                submitUser[0] = RandomUtil.randomEle(handed);
+                event.getSubject().sendMessage("这个b还没有交\r\n随机帮你选择了" + submitUser[0].getString("userRealName") + "的作业");
             }
             String imageUrl = submitUser[0].getString("submitCover");
             if (imageUrl.equals("") && (!isCard)) {
