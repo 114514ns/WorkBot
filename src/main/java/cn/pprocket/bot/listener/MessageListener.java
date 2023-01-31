@@ -133,10 +133,9 @@ public class MessageListener {
             MessageChain chain = event.getMessage(); // 可获取到消息内容等, 详细查阅 `GroupMessageEvent`
             String message = chain.contentToString();
             message = message.toLowerCase();
-            List<WorkList.DataDTO> list = null;
+            List<WorkList.DataDTO> list = WorkClient.INSTANCE.getWorkList();
             if (message.contains("list")) {
                 if (message.equals("list")) {
-                    list = WorkClient.INSTANCE.getWorkList();
                     StringBuilder sb = new StringBuilder();
                     int[] i = new int[]{0};
                     i[0] = 1;

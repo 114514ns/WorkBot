@@ -18,7 +18,7 @@ public class FriendRequestListener {
                     try {
                         Thread.sleep(3000);
                         event.getFriend().sendMessage("使用方法：\r\n" +
-                                "先输入 获取作业列表 然后把作业前面的序号加上你要看的人的名字的缩写,然后等待数秒即可\r\n " +
+                                "先输入 list（list默认返回12条作业，如需指定返回数目 在list 后 加数字 如 list 114514）   然后把作业前面的序号加上你要看的人的名字的缩写,然后等待数秒即可\r\n " +
                                 "例如 3 yjj");
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
