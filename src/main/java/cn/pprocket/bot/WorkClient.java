@@ -21,6 +21,12 @@ public class WorkClient  {
         Debug.Debug("请求作业列表");
         return bean.getData();
     }
+    public List<WorkList.DataDTO> getWorkList(int num) {
+        String res = NetWorkUtils.sendPOST("https://lulu.lulufind.com/mrzy/mrzypc/findWorkNewVersion?start=0&limit=10&num=" + num);
+        WorkList bean = gson.fromJson(res, WorkList.class);
+        Debug.Debug("请求作业列表");
+        return bean.getData();
+    }
     public void login(String username,String password) {
 
         String res = NetWorkUtils.sendPOSTDirectly("https://api-prod.lulufind.com/api/v1/auth/smslogin?phone=" + username + "&password=" + password,"api-prod.lulufind.com");

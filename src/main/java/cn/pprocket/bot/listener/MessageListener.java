@@ -133,17 +133,33 @@ public class MessageListener {
             MessageChain chain = event.getMessage(); // 可获取到消息内容等, 详细查阅 `GroupMessageEvent`
             String message = chain.contentToString();
             message = message.toLowerCase();
-            List<WorkList.DataDTO> list = WorkClient.INSTANCE.getWorkList();
-            if (message.equals("获取作业列表") || message.equals("list")) {
-                StringBuilder sb = new StringBuilder();
-                int[] i = new int[]{0};
-                i[0] = 1;
-                list.forEach(ele -> {
-                    String title = ele.getWorkDetail();
-                    sb.append(i[0]++ + "    " + title + "\n");
-                });
-                event.getSubject().sendMessage(sb.toString());
-                return;
+            List<WorkList.DataDTO> list = null;
+            if (message.contains("list")) {
+                if (message.equals("list")) {
+                    list = WorkClient.INSTANCE.getWorkList();
+                    StringBuilder sb = new StringBuilder();
+                    int[] i = new int[]{0};
+                    i[0] = 1;
+                    list.forEach(ele -> {
+                        String title = ele.getWorkDetail();
+                        sb.append(i[0]++ + "    " + title + "\n");
+                    });
+                    event.getSubject().sendMessage(sb.toString());
+                    return;
+                } else {
+                    int i = Integer.parseInt(message.replace("list ", ""));
+                    list = WorkClient.INSTANCE.getWorkList(i);
+                    StringBuilder sb = new StringBuilder();
+                    int[] i1 = new int[]{0};
+                    i1[0] = 1;
+                    list.forEach(ele -> {
+                        String title = ele.getWorkDetail();
+                        sb.append(i1[0]++ + "    " + title + "\n");
+                    });
+                    event.getSubject().sendMessage(sb.toString());
+                    return;
+                }
+
             }
             Integer inputId = getNumber(message);
             String name = message.replaceAll(String.valueOf(inputId),"").replace(" ","");
